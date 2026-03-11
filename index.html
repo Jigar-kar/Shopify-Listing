@@ -1,805 +1,1264 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shopify Bulk Product Lister</title>
-    <meta name="description"
-        content="Bulk create Shopify-compatible product listings with GitHub image hosting and Google Sheets integration." />
+    <meta
+      name="description"
+      content="Bulk create Shopify-compatible product listings with GitHub image hosting and Google Sheets integration."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
-</head>
+  </head>
 
-<body>
-
+  <body>
     <!-- â”€â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-icon"><i class="bi bi-bag-check-fill"></i></div>
-            <span class="brand-text">ShopifyBulk</span>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="#" class="sidebar-link active" data-page="lister">
-                <i class="bi bi-grid-1x2-fill"></i><span>Product Lister</span>
-            </a>
-            <a href="#" class="sidebar-link" data-page="settings">
-                <i class="bi bi-gear-fill"></i><span>Settings</span>
-            </a>
-            <a href="#" class="sidebar-link" data-page="help">
-                <i class="bi bi-question-circle-fill"></i><span>Help & Guide</span>
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <small class="text-muted">v2.0.0 â€¢ Production Ready</small>
-        </div>
+      <div class="sidebar-brand">
+        <div class="brand-icon"><i class="bi bi-bag-check-fill"></i></div>
+        <span class="brand-text">ShopifyBulk</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link active" data-page="lister">
+          <i class="bi bi-grid-1x2-fill"></i><span>Product Lister</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="settings">
+          <i class="bi bi-gear-fill"></i><span>Settings</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="help">
+          <i class="bi bi-question-circle-fill"></i><span>Help & Guide</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <small class="text-muted">v2.0.0 â€¢ Production Ready</small>
+      </div>
     </aside>
 
     <!-- â”€â”€â”€ Top Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div class="main-wrapper">
-        <header class="topbar">
-            <button class="btn sidebar-toggle" id="sidebarToggle">
-                <i class="bi bi-list fs-4"></i>
-            </button>
-            <div class="topbar-title">
-                <h1 class="page-heading" id="pageHeading">Product Lister</h1>
+      <header class="topbar">
+        <button class="btn sidebar-toggle" id="sidebarToggle">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+        <div class="topbar-title">
+          <h1 class="page-heading" id="pageHeading">Product Lister</h1>
+        </div>
+        <div class="topbar-actions">
+          <span
+            class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2"
+            id="statusBadge"
+          >
+            <i class="bi bi-circle-fill me-1" style="font-size: 0.55rem"></i
+            >Ready
+          </span>
+        </div>
+      </header>
+
+      <!-- â”€â”€â”€ Toast Container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+      <div
+        class="toast-container position-fixed top-0 end-0 p-3"
+        style="z-index: 9999"
+        id="toastContainer"
+      ></div>
+
+      <!-- â”€â”€â”€ Pages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+      <main class="main-content">
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• PAGE: LISTER â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="page active" id="page-lister">
+          <!-- Config reminder banner (hidden once config is saved) -->
+          <div
+            class="alert alert-info alert-dismissible d-flex align-items-center gap-3 mb-4 py-2"
+            id="configBanner"
+            role="alert"
+            style="display: none !important"
+          >
+            <i class="bi bi-gear-fill fs-5 flex-shrink-0"></i>
+            <div class="small">
+              <strong>Setup required:</strong> Configure your GitHub token,
+              Google Sheets URL, and Vendor name before uploading.
+              <a
+                href="#"
+                class="alert-link ms-1 sidebar-link-inline"
+                data-page="settings"
+                >Go to Settings â†’</a
+              >
             </div>
-            <div class="topbar-actions">
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2"
-                    id="statusBadge">
-                    <i class="bi bi-circle-fill me-1" style="font-size:.55rem"></i>Ready
-                </span>
+            <button
+              type="button"
+              class="btn-close ms-auto"
+              data-bs-dismiss="alert"
+            ></button>
+          </div>
+
+          <!-- Welcome Banner -->
+          <div class="welcome-banner" id="welcomeBanner">
+            <div>
+              <h5>🚀 Shopify Bulk Lister</h5>
+              <p>
+                Create beautiful product listings in seconds — upload images,
+                set variants & export to Shopify.
+              </p>
+              <div class="stats-strip mt-3" id="statsStrip">
+                <div class="stat-pill">
+                  <span class="stat-dot" style="background: #6366f1"></span>
+                  <span class="stat-val" id="statProducts">0</span>
+                  <span>Products</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="stat-dot" style="background: #8b5cf6"></span>
+                  <span class="stat-val" id="statColors">0</span>
+                  <span>Colors</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="stat-dot" style="background: #06b6d4"></span>
+                  <span class="stat-val" id="statImages">0</span>
+                  <span>Images</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="stat-dot" style="background: #10b981"></span>
+                  <span class="stat-val" id="statVideos">0</span>
+                  <span>Videos</span>
+                </div>
+              </div>
             </div>
-        </header>
+            <span class="banner-emoji">💎</span>
+          </div>
 
-        <!-- â”€â”€â”€ Toast Container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;" id="toastContainer"></div>
+          <!-- Products Container -->
+          <div id="productsContainer"></div>
 
-        <!-- â”€â”€â”€ Pages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-        <main class="main-content">
+          <!-- Toolbar -->
+          <div class="toolbar-sticky">
+            <div
+              class="d-flex flex-wrap gap-2 align-items-center justify-content-between"
+            >
+              <button class="btn btn-outline-primary" id="addProductBtn">
+                <i class="bi bi-plus-circle-fill me-2"></i>Add Product
+              </button>
+              <div class="d-flex gap-2">
+                <button
+                  class="btn btn-outline-secondary"
+                  id="goToSettingsBtn"
+                  title="Configure GitHub & Sheets"
+                >
+                  <i class="bi bi-gear-fill me-1"></i>Settings
+                </button>
+                <button class="btn btn-secondary" id="previewCsvBtn">
+                  <i class="bi bi-eye-fill me-2"></i>Preview CSV
+                </button>
+                <button class="btn btn-success" id="submitAllBtn">
+                  <i class="bi bi-cloud-upload-fill me-2"></i>Upload &amp;
+                  Export
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• PAGE: LISTER â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-            <div class="page active" id="page-lister">
-
-                <!-- Config reminder banner (hidden once config is saved) -->
-                <div class="alert alert-info alert-dismissible d-flex align-items-center gap-3 mb-4 py-2"
-                    id="configBanner" role="alert" style="display:none!important">
-                    <i class="bi bi-gear-fill fs-5 flex-shrink-0"></i>
-                    <div class="small">
-                        <strong>Setup required:</strong> Configure your GitHub token, Google Sheets URL, and Vendor name
-                        before uploading.
-                        <a href="#" class="alert-link ms-1 sidebar-link-inline" data-page="settings">Go to Settings
-                            â†’</a>
-                    </div>
-                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                </div>
-
-                <!-- Welcome Banner -->
-                <div class="welcome-banner" id="welcomeBanner">
-                    <div>
-                        <h5>🚀 Shopify Bulk Lister</h5>
-                        <p>Create beautiful product listings in seconds — upload images, set variants & export to
-                            Shopify.</p>
-                        <div class="stats-strip mt-3" id="statsStrip">
-                            <div class="stat-pill">
-                                <span class="stat-dot" style="background:#6366f1"></span>
-                                <span class="stat-val" id="statProducts">0</span>
-                                <span>Products</span>
-                            </div>
-                            <div class="stat-pill">
-                                <span class="stat-dot" style="background:#8b5cf6"></span>
-                                <span class="stat-val" id="statColors">0</span>
-                                <span>Colors</span>
-                            </div>
-                            <div class="stat-pill">
-                                <span class="stat-dot" style="background:#06b6d4"></span>
-                                <span class="stat-val" id="statImages">0</span>
-                                <span>Images</span>
-                            </div>
-                            <div class="stat-pill">
-                                <span class="stat-dot" style="background:#10b981"></span>
-                                <span class="stat-val" id="statVideos">0</span>
-                                <span>Videos</span>
-                            </div>
-                        </div>
-                    </div>
-                    <span class="banner-emoji">💎</span>
-                </div>
-
-                <!-- Products Container -->
-                <div id="productsContainer"></div>
-
-                <!-- Toolbar -->
-                <div class="toolbar-sticky">
-                    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-                        <button class="btn btn-outline-primary" id="addProductBtn">
-                            <i class="bi bi-plus-circle-fill me-2"></i>Add Product
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• PAGE: SETTINGS â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="page" id="page-settings">
+          <!-- â”€â”€ Integration Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+          <div class="row g-3 mb-4">
+            <!-- GitHub -->
+            <div class="col-md-6">
+              <div class="card config-card h-100">
+                <div class="card-body">
+                  <h6 class="card-section-title mb-3">
+                    <i class="bi bi-github me-2"></i>GitHub Configuration
+                  </h6>
+                  <div class="row g-2">
+                    <div class="col-12">
+                      <label class="form-label"
+                        >Personal Access Token
+                        <span class="text-danger">*</span></label
+                      >
+                      <div class="input-group">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="githubToken"
+                          placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                        />
+                        <button
+                          class="btn btn-outline-secondary"
+                          type="button"
+                          id="toggleGhToken"
+                        >
+                          <i class="bi bi-eye"></i>
                         </button>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-secondary" id="goToSettingsBtn"
-                                title="Configure GitHub & Sheets">
-                                <i class="bi bi-gear-fill me-1"></i>Settings
-                            </button>
-                            <button class="btn btn-secondary" id="previewCsvBtn">
-                                <i class="bi bi-eye-fill me-2"></i>Preview CSV
-                            </button>
-                            <button class="btn btn-success" id="submitAllBtn">
-                                <i class="bi bi-cloud-upload-fill me-2"></i>Upload &amp; Export
-                            </button>
-                        </div>
+                      </div>
+                      <div class="form-text">
+                        Never share this token. It is stored locally in your
+                        browser.
+                      </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• PAGE: SETTINGS â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-            <div class="page" id="page-settings">
-
-                <!-- â”€â”€ Integration Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-                <div class="row g-3 mb-4">
-
-                    <!-- GitHub -->
                     <div class="col-md-6">
-                        <div class="card config-card h-100">
-                            <div class="card-body">
-                                <h6 class="card-section-title mb-3">
-                                    <i class="bi bi-github me-2"></i>GitHub Configuration
-                                </h6>
-                                <div class="row g-2">
-                                    <div class="col-12">
-                                        <label class="form-label">Personal Access Token <span
-                                                class="text-danger">*</span></label>
-                                        <div class="input-group">
-                                            <input type="password" class="form-control" id="githubToken"
-                                                placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
-                                            <button class="btn btn-outline-secondary" type="button" id="toggleGhToken">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </div>
-                                        <div class="form-text">Never share this token. It is stored locally in your
-                                            browser.</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">GitHub Username <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="githubUser"
-                                            placeholder="your-username" />
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Repository Name <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="githubRepo"
-                                            placeholder="product-images" />
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Branch</label>
-                                        <input type="text" class="form-control" id="githubBranch" value="main"
-                                            placeholder="main" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      <label class="form-label"
+                        >GitHub Username
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="githubUser"
+                        placeholder="your-username"
+                      />
                     </div>
-
-                    <!-- Google Sheets -->
                     <div class="col-md-6">
-                        <div class="card config-card h-100">
-                            <div class="card-body">
-                                <h6 class="card-section-title mb-3">
-                                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>Google Sheets Configuration
-                                </h6>
-                                <div class="row g-2">
-                                    <div class="col-12">
-                                        <label class="form-label">Apps Script Web App URL <span
-                                                class="text-danger">*</span></label>
-                                        <input type="url" class="form-control" id="sheetsUrl"
-                                            placeholder="https://script.google.com/macros/s/.../exec" />
-                                        <div class="form-text">Deploy your Apps Script as a Web App and paste the URL
-                                            here.</div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Vendor / Brand Name <span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="globalVendor"
-                                            placeholder="Your Brand Name" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      <label class="form-label"
+                        >Repository Name
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="githubRepo"
+                        placeholder="product-images"
+                      />
                     </div>
-
+                    <div class="col-12">
+                      <label class="form-label">Branch</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="githubBranch"
+                        value="main"
+                        placeholder="main"
+                      />
+                    </div>
+                  </div>
                 </div>
-
-                <!-- â”€â”€ Inventory &amp; Defaults â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-                <div class="row g-4">
-                    <div class="col-lg-7">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-section-title mb-4"><i class="bi bi-sliders me-2"></i>Default Inventory
-                                    Settings</h5>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Inventory Policy</label>
-                                        <select class="form-select" id="defaultInventoryPolicy">
-                                            <option value="deny">Deny (stop selling)</option>
-                                            <option value="continue">Continue (oversell)</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Fulfillment Service</label>
-                                        <select class="form-select" id="defaultFulfillment">
-                                            <option value="manual">Manual</option>
-                                            <option value="automatic">Automatic</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Requires Shipping</label>
-                                        <select class="form-select" id="defaultShipping">
-                                            <option value="TRUE">TRUE</option>
-                                            <option value="FALSE">FALSE</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Taxable</label>
-                                        <select class="form-select" id="defaultTaxable">
-                                            <option value="TRUE">TRUE</option>
-                                            <option value="FALSE">FALSE</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Published</label>
-                                        <select class="form-select" id="defaultPublished">
-                                            <option value="TRUE">TRUE</option>
-                                            <option value="FALSE">FALSE</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <hr />
-                                <button class="btn btn-primary" id="saveSettingsBtn">
-                                    <i class="bi bi-floppy-fill me-1"></i>Save All Settings
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-section-title mb-3"><i class="bi bi-info-circle me-2"></i>About</h5>
-                                <p class="text-muted small">Shopify Bulk Product Lister v2.0 â€” Production Ready</p>
-                                <ul class="list-unstyled small text-muted">
-                                    <li><i class="bi bi-check2-circle text-success me-2"></i>Shopify CSV compatible</li>
-                                    <li><i class="bi bi-check2-circle text-success me-2"></i>GitHub raw image hosting
-                                    </li>
-                                    <li><i class="bi bi-check2-circle text-success me-2"></i>Google Sheets integration
-                                    </li>
-                                    <li><i class="bi bi-check2-circle text-success me-2"></i>Unlimited variants &amp;
-                                        images</li>
-                                    <li><i class="bi bi-check2-circle text-success me-2"></i>Duplicate SKU prevention
-                                    </li>
-                                    <li><i class="bi bi-check2-circle text-success me-2"></i>Color-grouped image upload
-                                    </li>
-                                </ul>
-                                <hr />
-                                <button class="btn btn-outline-danger btn-sm" id="clearDataBtn">
-                                    <i class="bi bi-trash3-fill me-1"></i>Clear All Saved Data
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+              </div>
             </div>
 
-            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• PAGE: HELP â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-            <div class="page" id="page-help">
-                <div class="row g-4">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-section-title mb-4"><i class="bi bi-book me-2"></i>Setup Guide</h5>
-                                <div class="accordion" id="helpAccordion">
-
-                                    <div class="accordion-item border-0 mb-2">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed rounded-3" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#help1">
-                                                <i class="bi bi-github me-2 text-primary"></i>Step 1 â€” GitHub Token
-                                                Setup
-                                            </button>
-                                        </h2>
-                                        <div id="help1" class="accordion-collapse collapse"
-                                            data-bs-parent="#helpAccordion">
-                                            <div class="accordion-body text-muted small">
-                                                <ol>
-                                                    <li>Go to <strong>GitHub â†’ Settings â†’ Developer settings â†’
-                                                            Personal
-                                                            access tokens â†’ Tokens (classic)</strong></li>
-                                                    <li>Click <strong>Generate new token (classic)</strong></li>
-                                                    <li>Enable scopes: <code>repo</code> (full control)</li>
-                                                    <li>Copy the token and paste into the GitHub Token field</li>
-                                                    <li>Create a public repository named <code>product-images</code> (or
-                                                        your preferred name)</li>
-                                                    <li>Images are stored at:
-                                                        <code>product-images/{handle}/{color}/filename.jpg</code>
-                                                    </li>
-                                                    <li>Raw URLs use:
-                                                        <code>https://raw.githubusercontent.com/{user}/{repo}/{branch}/...</code>
-                                                    </li>
-                                                </ol>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="accordion-item border-0 mb-2">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed rounded-3" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#help2">
-                                                <i class="bi bi-google me-2 text-success"></i>Step 2 â€” Google Apps
-                                                Script Setup
-                                            </button>
-                                        </h2>
-                                        <div id="help2" class="accordion-collapse collapse"
-                                            data-bs-parent="#helpAccordion">
-                                            <div class="accordion-body text-muted small">
-                                                <ol>
-                                                    <li>Open <a href="https://sheets.google.com" target="_blank">Google
-                                                            Sheets</a> and create a new spreadsheet</li>
-                                                    <li>Go to <strong>Extensions â†’ Apps Script</strong></li>
-                                                    <li>Paste the Google Apps Script code (see below)</li>
-                                                    <li>Click <strong>Deploy â†’ New deployment â†’ Web app</strong>
-                                                    </li>
-                                                    <li>Set <strong>Execute as: Me</strong> and <strong>Who has access:
-                                                            Anyone</strong></li>
-                                                    <li>Click Deploy and copy the Web App URL</li>
-                                                    <li>Paste that URL into the Google Sheets URL field</li>
-                                                </ol>
-                                                <div class="code-block mt-3">
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                        <strong>Google Apps Script Code</strong>
-                                                        <button class="btn btn-xs btn-outline-secondary"
-                                                            onclick="copyGASCode()"><i
-                                                                class="bi bi-copy me-1"></i>Copy</button>
-                                                    </div>
-                                                    <pre id="gasCodeBlock" class="mb-0"></pre>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="accordion-item border-0 mb-2">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed rounded-3" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#help3">
-                                                <i class="bi bi-filetype-csv me-2 text-warning"></i>Step 3 â€” Shopify
-                                                CSV
-                                                Import
-                                            </button>
-                                        </h2>
-                                        <div id="help3" class="accordion-collapse collapse"
-                                            data-bs-parent="#helpAccordion">
-                                            <div class="accordion-body text-muted small">
-                                                <ol>
-                                                    <li>Click <strong>Upload &amp; Save to Sheets</strong></li>
-                                                    <li>Images &amp; videos upload to your GitHub repo</li>
-                                                    <li>All product rows are sent directly to your <strong>Google
-                                                            Sheet</strong></li>
-                                                    <li>Open your Sheet → <strong>File → Download → CSV</strong> to get
-                                                        the import file</li>
-                                                    <li>In Shopify Admin, go to <strong>Products → Import</strong></li>
-                                                    <li>Upload the CSV file and click <strong>Import products</strong>
-                                                    </li>
-                                                    <li>Images must be publicly accessible (GitHub raw URLs are ✅)
-                                                    </li>
-                                                </ol>
-                                                <div class="alert alert-warning mt-3 mb-0 small">
-                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                                                    Ensure GitHub repository is <strong>public</strong> so Shopify can
-                                                    access image URLs.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="accordion-item border-0 mb-2">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed rounded-3" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#help4">
-                                                <i class="bi bi-layers me-2 text-purple"></i>Step 4 â€” Variant
-                                                Structure
-                                            </button>
-                                        </h2>
-                                        <div id="help4" class="accordion-collapse collapse"
-                                            data-bs-parent="#helpAccordion">
-                                            <div class="accordion-body text-muted small">
-                                                <ul>
-                                                    <li>Each <strong>Color</strong> group can have multiple sizes and
-                                                        images</li>
-                                                    <li>The <strong>first variant row</strong> contains product title,
-                                                        description, vendor etc.</li>
-                                                    <li>Subsequent rows only contain variant-specific fields</li>
-                                                    <li>Images upload to <code>/product-images/{handle}/{color}/</code>
-                                                        on GitHub</li>
-                                                    <li>Image positions auto-increment within each product</li>
-                                                    <li>Duplicate SKUs are blocked before submission</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div><!-- /accordion -->
-                            </div>
-                        </div>
+            <!-- Google Sheets -->
+            <div class="col-md-6">
+              <div class="card config-card h-100">
+                <div class="card-body">
+                  <h6 class="card-section-title mb-3">
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>Google
+                    Sheets Configuration
+                  </h6>
+                  <div class="row g-2">
+                    <div class="col-12">
+                      <label class="form-label"
+                        >Apps Script Web App URL
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="url"
+                        class="form-control"
+                        id="sheetsUrl"
+                        placeholder="https://script.google.com/macros/s/.../exec"
+                      />
+                      <div class="form-text">
+                        Deploy your Apps Script as a Web App and paste the URL
+                        here.
+                      </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-section-title mb-3"><i class="bi bi-table me-2"></i>CSV Column Order
-                                </h6>
-                                <ol class="small text-muted ps-3">
-                                    <li>Handle</li>
-                                    <li>Title</li>
-                                    <li>Body (HTML)</li>
-                                    <li>Vendor</li>
-                                    <li>Product Category</li>
-                                    <li>Type</li>
-                                    <li>Tags</li>
-                                    <li>Published</li>
-                                    <li>Option1 Name</li>
-                                    <li>Option1 Value</li>
-                                    <li>Option2 Name</li>
-                                    <li>Option2 Value</li>
-                                    <li>Variant SKU</li>
-                                    <li>Variant Inventory Qty</li>
-                                    <li>Variant Inventory Policy</li>
-                                    <li>Variant Fulfillment Service</li>
-                                    <li>Variant Price</li>
-                                    <li>Variant Compare At Price</li>
-                                    <li>Variant Requires Shipping</li>
-                                    <li>Variant Taxable</li>
-                                    <li>Image Src</li>
-                                    <li>Image Position</li>
-                                    <li>SEO Title</li>
-                                    <li>SEO Description</li>
-                                </ol>
-                            </div>
-                        </div>
+                    <div class="col-12">
+                      <label class="form-label"
+                        >Vendor / Brand Name
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="globalVendor"
+                        placeholder="Your Brand Name"
+                      />
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
+          <!-- ── Upload Mode Configuration ──────────────────────────────────────────────── -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <div class="card config-card h-100">
+                <div class="card-body">
+                  <h6 class="card-section-title mb-3">
+                    <i class="bi bi-cloud-arrow-up me-2"></i>Upload Mode
+                  </h6>
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label class="form-label">Choose Upload Method</label>
+                      <div class="btn-group w-100" role="group">
+                        <input
+                          type="radio"
+                          class="btn-check"
+                          name="uploadMode"
+                          id="uploadModeCSV"
+                          value="csv"
+                          checked
+                        />
+                        <label
+                          class="btn btn-outline-primary"
+                          for="uploadModeCSV"
+                        >
+                          <i class="bi bi-file-earmark-spreadsheet me-1"></i>CSV
+                          Export
+                        </label>
+                        <input
+                          type="radio"
+                          class="btn-check"
+                          name="uploadMode"
+                          id="uploadModeAPI"
+                          value="api"
+                        />
+                        <label
+                          class="btn btn-outline-success"
+                          for="uploadModeAPI"
+                        >
+                          <i class="bi bi-cloud-check me-1"></i>Direct Shopify
+                          API
+                        </label>
+                      </div>
+                      <div class="form-text mt-2">
+                        <strong>CSV Export:</strong> Download CSV for manual
+                        import<br />
+                        <strong>Direct API:</strong> Auto-create products in
+                        Shopify
+                      </div>
+                    </div>
+                    <div
+                      class="col-12"
+                      id="apiConfigSection"
+                      style="display: none"
+                    >
+                      <label class="form-label">API Server URL</label>
+                      <input
+                        type="url"
+                        class="form-control"
+                        id="apiServerUrl"
+                        placeholder="http://localhost:3000/api/add-product"
+                        value="http://localhost:3000/api/add-product"
+                      />
+                      <div class="form-text">
+                        Enter your backend server URL. Default:
+                        <code>http://localhost:3000/api/add-product</code>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- â”€â”€ Inventory &amp; Defaults â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+          <div class="row g-4">
+            <div class="col-lg-7">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-section-title mb-4">
+                    <i class="bi bi-sliders me-2"></i>Default Inventory Settings
+                  </h5>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Inventory Policy</label>
+                      <select class="form-select" id="defaultInventoryPolicy">
+                        <option value="deny">Deny (stop selling)</option>
+                        <option value="continue">Continue (oversell)</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Fulfillment Service</label>
+                      <select class="form-select" id="defaultFulfillment">
+                        <option value="manual">Manual</option>
+                        <option value="automatic">Automatic</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Requires Shipping</label>
+                      <select class="form-select" id="defaultShipping">
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Taxable</label>
+                      <select class="form-select" id="defaultTaxable">
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Published</label>
+                      <select class="form-select" id="defaultPublished">
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                      </select>
+                    </div>
+                  </div>
+                  <hr />
+                  <button class="btn btn-primary" id="saveSettingsBtn">
+                    <i class="bi bi-floppy-fill me-1"></i>Save All Settings
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-section-title mb-3">
+                    <i class="bi bi-info-circle me-2"></i>About
+                  </h5>
+                  <p class="text-muted small">
+                    Shopify Bulk Product Lister v2.0 â€” Production Ready
+                  </p>
+                  <ul class="list-unstyled small text-muted">
+                    <li>
+                      <i class="bi bi-check2-circle text-success me-2"></i
+                      >Shopify CSV compatible
+                    </li>
+                    <li>
+                      <i class="bi bi-check2-circle text-success me-2"></i
+                      >GitHub raw image hosting
+                    </li>
+                    <li>
+                      <i class="bi bi-check2-circle text-success me-2"></i
+                      >Google Sheets integration
+                    </li>
+                    <li>
+                      <i class="bi bi-check2-circle text-success me-2"></i
+                      >Unlimited variants &amp; images
+                    </li>
+                    <li>
+                      <i class="bi bi-check2-circle text-success me-2"></i
+                      >Duplicate SKU prevention
+                    </li>
+                    <li>
+                      <i class="bi bi-check2-circle text-success me-2"></i
+                      >Color-grouped image upload
+                    </li>
+                  </ul>
+                  <hr />
+                  <button
+                    class="btn btn-outline-danger btn-sm"
+                    id="clearDataBtn"
+                  >
+                    <i class="bi bi-trash3-fill me-1"></i>Clear All Saved Data
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        </main>
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• PAGE: HELP â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="page" id="page-help">
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-section-title mb-4">
+                    <i class="bi bi-book me-2"></i>Setup Guide
+                  </h5>
+                  <div class="accordion" id="helpAccordion">
+                    <div class="accordion-item border-0 mb-2">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed rounded-3"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#help1"
+                        >
+                          <i class="bi bi-github me-2 text-primary"></i>Step 1
+                          â€” GitHub Token Setup
+                        </button>
+                      </h2>
+                      <div
+                        id="help1"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#helpAccordion"
+                      >
+                        <div class="accordion-body text-muted small">
+                          <ol>
+                            <li>
+                              Go to
+                              <strong
+                                >GitHub â†’ Settings â†’ Developer settings â†’
+                                Personal access tokens â†’ Tokens
+                                (classic)</strong
+                              >
+                            </li>
+                            <li>
+                              Click
+                              <strong>Generate new token (classic)</strong>
+                            </li>
+                            <li>
+                              Enable scopes: <code>repo</code> (full control)
+                            </li>
+                            <li>
+                              Copy the token and paste into the GitHub Token
+                              field
+                            </li>
+                            <li>
+                              Create a public repository named
+                              <code>product-images</code> (or your preferred
+                              name)
+                            </li>
+                            <li>
+                              Images are stored at:
+                              <code
+                                >product-images/{handle}/{color}/filename.jpg</code
+                              >
+                            </li>
+                            <li>
+                              Raw URLs use:
+                              <code
+                                >https://raw.githubusercontent.com/{user}/{repo}/{branch}/...</code
+                              >
+                            </li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-2">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed rounded-3"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#help2"
+                        >
+                          <i class="bi bi-google me-2 text-success"></i>Step 2
+                          â€” Google Apps Script Setup
+                        </button>
+                      </h2>
+                      <div
+                        id="help2"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#helpAccordion"
+                      >
+                        <div class="accordion-body text-muted small">
+                          <ol>
+                            <li>
+                              Open
+                              <a
+                                href="https://sheets.google.com"
+                                target="_blank"
+                                >Google Sheets</a
+                              >
+                              and create a new spreadsheet
+                            </li>
+                            <li>
+                              Go to <strong>Extensions â†’ Apps Script</strong>
+                            </li>
+                            <li>
+                              Paste the Google Apps Script code (see below)
+                            </li>
+                            <li>
+                              Click
+                              <strong
+                                >Deploy â†’ New deployment â†’ Web app</strong
+                              >
+                            </li>
+                            <li>
+                              Set <strong>Execute as: Me</strong> and
+                              <strong>Who has access: Anyone</strong>
+                            </li>
+                            <li>Click Deploy and copy the Web App URL</li>
+                            <li>
+                              Paste that URL into the Google Sheets URL field
+                            </li>
+                          </ol>
+                          <div class="code-block mt-3">
+                            <div
+                              class="d-flex justify-content-between align-items-center mb-2"
+                            >
+                              <strong>Google Apps Script Code</strong>
+                              <button
+                                class="btn btn-xs btn-outline-secondary"
+                                onclick="copyGASCode()"
+                              >
+                                <i class="bi bi-copy me-1"></i>Copy
+                              </button>
+                            </div>
+                            <pre id="gasCodeBlock" class="mb-0"></pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-2">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed rounded-3"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#help3"
+                        >
+                          <i class="bi bi-filetype-csv me-2 text-warning"></i
+                          >Step 3 â€” Shopify CSV Import
+                        </button>
+                      </h2>
+                      <div
+                        id="help3"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#helpAccordion"
+                      >
+                        <div class="accordion-body text-muted small">
+                          <ol>
+                            <li>
+                              Click <strong>Upload &amp; Save to Sheets</strong>
+                            </li>
+                            <li>
+                              Images &amp; videos upload to your GitHub repo
+                            </li>
+                            <li>
+                              All product rows are sent directly to your
+                              <strong>Google Sheet</strong>
+                            </li>
+                            <li>
+                              Open your Sheet →
+                              <strong>File → Download → CSV</strong> to get the
+                              import file
+                            </li>
+                            <li>
+                              In Shopify Admin, go to
+                              <strong>Products → Import</strong>
+                            </li>
+                            <li>
+                              Upload the CSV file and click
+                              <strong>Import products</strong>
+                            </li>
+                            <li>
+                              Images must be publicly accessible (GitHub raw
+                              URLs are ✅)
+                            </li>
+                          </ol>
+                          <div class="alert alert-warning mt-3 mb-0 small">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                            Ensure GitHub repository is
+                            <strong>public</strong> so Shopify can access image
+                            URLs.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-2">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed rounded-3"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#help4"
+                        >
+                          <i class="bi bi-layers me-2 text-purple"></i>Step 4
+                          â€” Variant Structure
+                        </button>
+                      </h2>
+                      <div
+                        id="help4"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#helpAccordion"
+                      >
+                        <div class="accordion-body text-muted small">
+                          <ul>
+                            <li>
+                              Each <strong>Color</strong> group can have
+                              multiple sizes and images
+                            </li>
+                            <li>
+                              The <strong>first variant row</strong> contains
+                              product title, description, vendor etc.
+                            </li>
+                            <li>
+                              Subsequent rows only contain variant-specific
+                              fields
+                            </li>
+                            <li>
+                              Images upload to
+                              <code>/product-images/{handle}/{color}/</code> on
+                              GitHub
+                            </li>
+                            <li>
+                              Image positions auto-increment within each product
+                            </li>
+                            <li>
+                              Duplicate SKUs are blocked before submission
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /accordion -->
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-body">
+                  <h6 class="card-section-title mb-3">
+                    <i class="bi bi-table me-2"></i>CSV Column Order
+                  </h6>
+                  <ol class="small text-muted ps-3">
+                    <li>Handle</li>
+                    <li>Title</li>
+                    <li>Body (HTML)</li>
+                    <li>Vendor</li>
+                    <li>Product Category</li>
+                    <li>Type</li>
+                    <li>Tags</li>
+                    <li>Published</li>
+                    <li>Option1 Name</li>
+                    <li>Option1 Value</li>
+                    <li>Option2 Name</li>
+                    <li>Option2 Value</li>
+                    <li>Variant SKU</li>
+                    <li>Variant Inventory Qty</li>
+                    <li>Variant Inventory Policy</li>
+                    <li>Variant Fulfillment Service</li>
+                    <li>Variant Price</li>
+                    <li>Variant Compare At Price</li>
+                    <li>Variant Requires Shipping</li>
+                    <li>Variant Taxable</li>
+                    <li>Image Src</li>
+                    <li>Image Position</li>
+                    <li>SEO Title</li>
+                    <li>SEO Description</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <!-- â”€â”€â”€ CSV Preview Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div class="modal fade" id="csvPreviewModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-filetype-csv me-2 text-success"></i>CSV Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered table-hover csv-preview-table mb-0"
-                            id="csvPreviewTable">
-                            <thead id="csvPreviewHead"></thead>
-                            <tbody id="csvPreviewBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <span class="text-muted small me-auto" id="csvRowCount"></span>
-                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-success" id="downloadCsvBtn">
-                        <i class="bi bi-download me-1"></i>Download CSV
-                    </button>
-                </div>
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-filetype-csv me-2 text-success"></i>CSV Preview
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-0">
+            <div class="table-responsive">
+              <table
+                class="table table-sm table-bordered table-hover csv-preview-table mb-0"
+                id="csvPreviewTable"
+              >
+                <thead id="csvPreviewHead"></thead>
+                <tbody id="csvPreviewBody"></tbody>
+              </table>
             </div>
+          </div>
+          <div class="modal-footer">
+            <span class="text-muted small me-auto" id="csvRowCount"></span>
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button class="btn btn-success" id="downloadCsvBtn">
+              <i class="bi bi-download me-1"></i>Download CSV
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- â”€â”€â”€ Global Progress Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-    <div class="modal fade" id="progressModal" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body p-4">
-                    <h6 class="fw-semibold mb-3" id="progressTitle">Processingâ€¦</h6>
-                    <div class="progress mb-2" style="height:10px">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="progressBar"
-                            style="width:0%"></div>
-                    </div>
-                    <small class="text-muted" id="progressStatus">Initializingâ€¦</small>
-                    <div id="progressLog" class="progress-log mt-3"></div>
-                </div>
+    <div
+      class="modal fade"
+      id="progressModal"
+      tabindex="-1"
+      data-bs-backdrop="static"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body p-4">
+            <h6 class="fw-semibold mb-3" id="progressTitle">Processingâ€¦</h6>
+            <div class="progress mb-2" style="height: 10px">
+              <div
+                class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                id="progressBar"
+                style="width: 0%"
+              ></div>
             </div>
+            <small class="text-muted" id="progressStatus"
+              >Initializingâ€¦</small
+            >
+            <div id="progressLog" class="progress-log mt-3"></div>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- â”€â”€â”€ Product Template (hidden) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <template id="productTemplate">
-        <div class="card product-card mb-4" data-product-id="">
-            <!-- Card Header -->
-            <div class="card-header product-card-header d-flex align-items-center gap-2">
-                <button class="btn btn-ghost drag-handle" title="Drag to reorder"><i
-                        class="bi bi-grip-vertical"></i></button>
-                <span class="product-number fw-semibold">Product #1</span>
-                <div class="ms-auto d-flex gap-2">
-                    <button class="btn btn-sm btn-ghost collapse-product-btn" title="Collapse"><i
-                            class="bi bi-chevron-up"></i></button>
-                    <button class="btn btn-sm btn-ghost remove-product-btn text-danger" title="Remove Product"><i
-                            class="bi bi-trash3"></i></button>
-                </div>
-            </div>
-
-            <!-- Step Indicator Bar -->
-            <div class="step-indicator-bar">
-                <div class="step-item active" data-target-step="1">
-                    <div class="step-bubble"><i class="bi bi-tag-fill"></i></div>
-                    <div class="step-label-text">Basic Info</div>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step-item" data-target-step="2">
-                    <div class="step-bubble"><i class="bi bi-file-text-fill"></i></div>
-                    <div class="step-label-text">Description</div>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step-item" data-target-step="3">
-                    <div class="step-bubble"><i class="bi bi-rulers"></i></div>
-                    <div class="step-label-text">Sizes</div>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step-item" data-target-step="4">
-                    <div class="step-bubble"><i class="bi bi-palette-fill"></i></div>
-                    <div class="step-label-text">Colors</div>
-                </div>
-            </div>
-
-            <div class="card-body product-card-body">
-
-                <!-- STEP 1: Basic Info -->
-                <div class="step-panel active" data-step-panel="1">
-                    <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F3F7;&#xFE0F;</span>
-                        <div>
-                            <div class="step-panel-title">Basic Information</div>
-                            <div class="step-panel-sub">Name your product and set its type &amp; category</div>
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Product Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control product-title"
-                                placeholder="e.g., Diamond Solitaire Necklace" />
-                            <div class="form-text handle-preview text-muted"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Type <span class="text-danger">*</span></label>
-                            <select class="form-select product-type">
-                                <option value="">-- Select Jewelry Type --</option>
-                                <option value="Necklace">Necklaces</option>
-                                <option value="Rings">Rings</option>
-                                <option value="Earrings">Earrings</option>
-                                <option value="Bracelet">Bracelets</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Product Category</label>
-                            <input type="text" class="form-control product-category" list="shopifyCategoryList"
-                                placeholder="e.g., Jewelry &gt; Rings" />
-                            <div class="form-text">Overrides global category</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- STEP 2: Description & SEO -->
-                <div class="step-panel" data-step-panel="2">
-                    <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F4DD;</span>
-                        <div>
-                            <div class="step-panel-title">Description &amp; SEO</div>
-                            <div class="step-panel-sub">Write a description and optimise for search engines</div>
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Description (Body HTML)</label>
-                            <textarea class="form-control product-description" rows="4"
-                                placeholder="Describe this product..."></textarea>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Tags</label>
-                            <input type="text" class="form-control product-tags"
-                                placeholder="sale, new-arrival, diamond, gold" />
-                            <div class="form-text">Comma-separated -- used for Shopify collections &amp; filters</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">SEO Title</label>
-                            <input type="text" class="form-control product-seo-title"
-                                placeholder="SEO Title (50-60 chars)" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">SEO Description</label>
-                            <input type="text" class="form-control product-seo-desc"
-                                placeholder="SEO Description (120-160 chars)" />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- STEP 3: Sizes -->
-                <div class="step-panel" data-step-panel="3">
-                    <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F4CF;</span>
-                        <div>
-                            <div class="step-panel-title">Sizes</div>
-                            <div class="step-panel-sub">Add ring / product sizes with SKU suffix and quantity</div>
-                        </div>
-                    </div>
-                    <div class="sizes-section">
-                        <div class="section-divider d-flex align-items-center mb-2 flex-wrap gap-2">
-                            <span class="section-label"><i class="bi bi-rulers me-1"></i>Size Options</span>
-                            <div class="form-check mb-0 ms-3">
-                                <input class="form-check-input no-size-check" type="checkbox" id="" />
-                                <label class="form-check-label small text-muted">No Size Option</label>
-                            </div>
-                            <div class="ms-auto d-flex gap-2 align-items-center flex-wrap">
-                                <input type="text" class="form-control form-control-sm bulk-sizes-input"
-                                    placeholder="Quick add: 6,7,8,9 or S,M,L,XL" style="min-width:220px;max-width:280px"
-                                    title="Type sizes separated by commas then click +" />
-                                <button class="btn btn-sm btn-outline-secondary add-size-btn" title="Add size rows">
-                                    <i class="bi bi-plus me-1"></i>Add Sizes
-                                </button>
-                            </div>
-                        </div>
-                        <div class="size-header-row d-flex gap-2 mb-1 sizes-header">
-                            <span class="text-muted" style="min-width:150px;font-size:11px;font-weight:600">SIZE
-                                NAME</span>
-                            <span class="text-muted" style="min-width:170px;font-size:11px;font-weight:600">SKU SUFFIX
-                                <span class="fw-normal">(optional)</span></span>
-                            <span class="text-muted" style="min-width:80px;font-size:11px;font-weight:600">QTY</span>
-                            <span class="text-muted" style="min-width:120px;font-size:11px;font-weight:600">PRICE
-                                OVERRIDE</span>
-                        </div>
-                        <div class="sizes-container mb-3"></div>
-                    </div>
-                </div>
-
-                <!-- STEP 4: Colors & Images -->
-                <div class="step-panel" data-step-panel="4">
-                    <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F3A8;</span>
-                        <div>
-                            <div class="step-panel-title">Colors &amp; Images</div>
-                            <div class="step-panel-sub">Add color variants with prices, images and videos</div>
-                        </div>
-                    </div>
-                    <div class="section-divider d-flex align-items-center mb-3">
-                        <span class="section-label"><i class="bi bi-palette-fill me-1"></i>Color Variants</span>
-                        <div class="divider-line flex-grow-1 ms-3"></div>
-                        <button class="btn btn-sm btn-outline-primary add-color-btn ms-3">
-                            <i class="bi bi-palette-fill me-1"></i>Add Color
-                        </button>
-                    </div>
-                    <div class="colors-container"></div>
-                </div>
-
-                <!-- Step Navigation Bar -->
-                <div class="step-nav-bar mt-4">
-                    <button class="btn btn-outline-secondary step-prev-btn" style="display:none">
-                        <i class="bi bi-arrow-left me-1"></i>Back
-                    </button>
-                    <div class="step-progress-dots">
-                        <span class="step-dot-nav active" data-dot="1"></span>
-                        <span class="step-dot-nav" data-dot="2"></span>
-                        <span class="step-dot-nav" data-dot="3"></span>
-                        <span class="step-dot-nav" data-dot="4"></span>
-                    </div>
-                    <button class="btn btn-primary step-next-btn">
-                        Next <i class="bi bi-arrow-right ms-1"></i>
-                    </button>
-                </div>
-
-            </div><!-- /card-body -->
+      <div class="card product-card mb-4" data-product-id="">
+        <!-- Card Header -->
+        <div
+          class="card-header product-card-header d-flex align-items-center gap-2"
+        >
+          <button class="btn btn-ghost drag-handle" title="Drag to reorder">
+            <i class="bi bi-grip-vertical"></i>
+          </button>
+          <span class="product-number fw-semibold">Product #1</span>
+          <div class="ms-auto d-flex gap-2">
+            <button
+              class="btn btn-sm btn-ghost collapse-product-btn"
+              title="Collapse"
+            >
+              <i class="bi bi-chevron-up"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-ghost remove-product-btn text-danger"
+              title="Remove Product"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
         </div>
+
+        <!-- Step Indicator Bar -->
+        <div class="step-indicator-bar">
+          <div class="step-item active" data-target-step="1">
+            <div class="step-bubble"><i class="bi bi-tag-fill"></i></div>
+            <div class="step-label-text">Basic Info</div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-target-step="2">
+            <div class="step-bubble"><i class="bi bi-file-text-fill"></i></div>
+            <div class="step-label-text">Description</div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-target-step="3">
+            <div class="step-bubble"><i class="bi bi-rulers"></i></div>
+            <div class="step-label-text">Sizes</div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-target-step="4">
+            <div class="step-bubble"><i class="bi bi-palette-fill"></i></div>
+            <div class="step-label-text">Colors</div>
+          </div>
+        </div>
+
+        <div class="card-body product-card-body">
+          <!-- STEP 1: Basic Info -->
+          <div class="step-panel active" data-step-panel="1">
+            <div class="step-panel-header">
+              <span class="step-panel-icon">&#x1F3F7;&#xFE0F;</span>
+              <div>
+                <div class="step-panel-title">Basic Information</div>
+                <div class="step-panel-sub">
+                  Name your product and set its type &amp; category
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label"
+                  >Product Title <span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control product-title"
+                  placeholder="e.g., Diamond Solitaire Necklace"
+                />
+                <div class="form-text handle-preview text-muted"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label"
+                  >Type <span class="text-danger">*</span></label
+                >
+                <select class="form-select product-type">
+                  <option value="">-- Select Jewelry Type --</option>
+                  <option value="Necklace">Necklaces</option>
+                  <option value="Rings">Rings</option>
+                  <option value="Earrings">Earrings</option>
+                  <option value="Bracelet">Bracelets</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Product Category</label>
+                <input
+                  type="text"
+                  class="form-control product-category"
+                  list="shopifyCategoryList"
+                  placeholder="e.g., Jewelry &gt; Rings"
+                />
+                <div class="form-text">Overrides global category</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: Description & SEO -->
+          <div class="step-panel" data-step-panel="2">
+            <div class="step-panel-header">
+              <span class="step-panel-icon">&#x1F4DD;</span>
+              <div>
+                <div class="step-panel-title">Description &amp; SEO</div>
+                <div class="step-panel-sub">
+                  Write a description and optimise for search engines
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Description (Body HTML)</label>
+                <textarea
+                  class="form-control product-description"
+                  rows="4"
+                  placeholder="Describe this product..."
+                ></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Tags</label>
+                <input
+                  type="text"
+                  class="form-control product-tags"
+                  placeholder="sale, new-arrival, diamond, gold"
+                />
+                <div class="form-text">
+                  Comma-separated -- used for Shopify collections &amp; filters
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">SEO Title</label>
+                <input
+                  type="text"
+                  class="form-control product-seo-title"
+                  placeholder="SEO Title (50-60 chars)"
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">SEO Description</label>
+                <input
+                  type="text"
+                  class="form-control product-seo-desc"
+                  placeholder="SEO Description (120-160 chars)"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: Sizes -->
+          <div class="step-panel" data-step-panel="3">
+            <div class="step-panel-header">
+              <span class="step-panel-icon">&#x1F4CF;</span>
+              <div>
+                <div class="step-panel-title">Sizes</div>
+                <div class="step-panel-sub">
+                  Add ring / product sizes with SKU suffix and quantity
+                </div>
+              </div>
+            </div>
+            <div class="sizes-section">
+              <div
+                class="section-divider d-flex align-items-center mb-2 flex-wrap gap-2"
+              >
+                <span class="section-label"
+                  ><i class="bi bi-rulers me-1"></i>Size Options</span
+                >
+                <div class="form-check mb-0 ms-3">
+                  <input
+                    class="form-check-input no-size-check"
+                    type="checkbox"
+                    id=""
+                  />
+                  <label class="form-check-label small text-muted"
+                    >No Size Option</label
+                  >
+                </div>
+                <div class="ms-auto d-flex gap-2 align-items-center flex-wrap">
+                  <input
+                    type="text"
+                    class="form-control form-control-sm bulk-sizes-input"
+                    placeholder="Quick add: 6,7,8,9 or S,M,L,XL"
+                    style="min-width: 220px; max-width: 280px"
+                    title="Type sizes separated by commas then click +"
+                  />
+                  <button
+                    class="btn btn-sm btn-outline-secondary add-size-btn"
+                    title="Add size rows"
+                  >
+                    <i class="bi bi-plus me-1"></i>Add Sizes
+                  </button>
+                </div>
+              </div>
+              <div class="size-header-row d-flex gap-2 mb-1 sizes-header">
+                <span
+                  class="text-muted"
+                  style="min-width: 150px; font-size: 11px; font-weight: 600"
+                  >SIZE NAME</span
+                >
+                <span
+                  class="text-muted"
+                  style="min-width: 170px; font-size: 11px; font-weight: 600"
+                  >SKU SUFFIX <span class="fw-normal">(optional)</span></span
+                >
+                <span
+                  class="text-muted"
+                  style="min-width: 80px; font-size: 11px; font-weight: 600"
+                  >QTY</span
+                >
+                <span
+                  class="text-muted"
+                  style="min-width: 120px; font-size: 11px; font-weight: 600"
+                  >PRICE OVERRIDE</span
+                >
+              </div>
+              <div class="sizes-container mb-3"></div>
+            </div>
+          </div>
+
+          <!-- STEP 4: Colors & Images -->
+          <div class="step-panel" data-step-panel="4">
+            <div class="step-panel-header">
+              <span class="step-panel-icon">&#x1F3A8;</span>
+              <div>
+                <div class="step-panel-title">Colors &amp; Images</div>
+                <div class="step-panel-sub">
+                  Add color variants with prices, images and videos
+                </div>
+              </div>
+            </div>
+            <div class="section-divider d-flex align-items-center mb-3">
+              <span class="section-label"
+                ><i class="bi bi-palette-fill me-1"></i>Color Variants</span
+              >
+              <div class="divider-line flex-grow-1 ms-3"></div>
+              <button class="btn btn-sm btn-outline-primary add-color-btn ms-3">
+                <i class="bi bi-palette-fill me-1"></i>Add Color
+              </button>
+            </div>
+            <div class="colors-container"></div>
+          </div>
+
+          <!-- Step Navigation Bar -->
+          <div class="step-nav-bar mt-4">
+            <button
+              class="btn btn-outline-secondary step-prev-btn"
+              style="display: none"
+            >
+              <i class="bi bi-arrow-left me-1"></i>Back
+            </button>
+            <div class="step-progress-dots">
+              <span class="step-dot-nav active" data-dot="1"></span>
+              <span class="step-dot-nav" data-dot="2"></span>
+              <span class="step-dot-nav" data-dot="3"></span>
+              <span class="step-dot-nav" data-dot="4"></span>
+            </div>
+            <button class="btn btn-primary step-next-btn">
+              Next <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /card-body -->
+      </div>
     </template>
 
     <!-- â”€â”€â”€ Color Variant Template â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <template id="colorTemplate">
-        <div class="color-block card mb-3">
-            <div class="card-header color-block-header d-flex align-items-center gap-2">
-                <div class="color-swatch" style="background:#cccccc"></div>
-                <div class="color-block-title fw-medium">Color</div>
-                <div class="ms-auto d-flex gap-2">
-                    <button class="btn btn-sm btn-ghost collapse-color-btn"><i class="bi bi-chevron-up"></i></button>
-                    <button class="btn btn-sm btn-ghost remove-color-btn text-danger"><i
-                            class="bi bi-trash3"></i></button>
-                </div>
-            </div>
-            <div class="card-body color-block-body">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Color Name <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <input type="color" class="form-control form-control-color color-picker" value="#cccccc"
-                                style="max-width:48px" />
-                            <input type="text" class="form-control color-name" placeholder="e.g., Navy Blue" />
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">SKU <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control variant-sku" placeholder="SKU-001" />
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Price <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
-                            <input type="number" class="form-control variant-price" placeholder="999" min="0"
-                                step="0.01" />
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Compare At</label>
-                        <div class="input-group">
-                            <span class="input-group-text">â‚¹</span>
-                            <input type="number" class="form-control variant-compare-price" placeholder="1299" min="0"
-                                step="0.01" />
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Inventory</label>
-                        <input type="number" class="form-control variant-inventory" placeholder="100" min="0"
-                            value="100" />
-                    </div>
-                </div>
-
-                <!-- Images (per color) -->
-                <div class="d-flex align-items-center mb-2">
-                    <span class="fw-medium small me-2"><i class="bi bi-images me-1"></i>Color Images</span>
-                    <span class="badge bg-secondary-subtle text-secondary ms-1 img-count-badge">0 images</span>
-                </div>
-                <div class="image-drop-zone" data-color="">
-                    <i class="bi bi-cloud-upload fs-3 text-muted mb-2"></i>
-                    <p class="mb-1 text-muted small">Drop images here or click to select</p>
-                    <p class="text-muted" style="font-size:.75rem">JPG, PNG, WEBP â€¢ Max 5MB each</p>
-                    <input type="file" class="image-file-input" accept="image/*" multiple style="display:none" />
-                </div>
-                <div class="image-previews-grid mt-2"></div>
-
-                <!-- Video (per color) -->
-                <div class="d-flex align-items-center mb-2 mt-3">
-                    <span class="fw-medium small me-2"><i class="bi bi-camera-video me-1"></i>Color Video
-                        <span class="text-muted fw-normal">(optional â€“ 1 per color)</span></span>
-                    <span class="badge bg-secondary-subtle text-secondary ms-1 video-count-badge">No video</span>
-                </div>
-                <div class="video-drop-zone" data-color="">
-                    <i class="bi bi-film fs-3 text-muted mb-2"></i>
-                    <p class="mb-1 text-muted small">Drop a video here or click to select</p>
-                    <p class="text-muted" style="font-size:.75rem">MP4, MOV, WEBM â€¢ Max 100MB</p>
-                    <input type="file" class="video-file-input" accept="video/mp4,video/mov,video/quicktime,video/webm"
-                        style="display:none" />
-                </div>
-                <div class="video-preview-wrap mt-2"></div>
-            </div>
+      <div class="color-block card mb-3">
+        <div
+          class="card-header color-block-header d-flex align-items-center gap-2"
+        >
+          <div class="color-swatch" style="background: #cccccc"></div>
+          <div class="color-block-title fw-medium">Color</div>
+          <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-sm btn-ghost collapse-color-btn">
+              <i class="bi bi-chevron-up"></i>
+            </button>
+            <button class="btn btn-sm btn-ghost remove-color-btn text-danger">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
         </div>
+        <div class="card-body color-block-body">
+          <div class="row g-3 mb-3">
+            <div class="col-md-3">
+              <label class="form-label"
+                >Color Name <span class="text-danger">*</span></label
+              >
+              <div class="input-group">
+                <input
+                  type="color"
+                  class="form-control form-control-color color-picker"
+                  value="#cccccc"
+                  style="max-width: 48px"
+                />
+                <input
+                  type="text"
+                  class="form-control color-name"
+                  placeholder="e.g., Navy Blue"
+                />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label"
+                >SKU <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control variant-sku"
+                placeholder="SKU-001"
+              />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label"
+                >Price <span class="text-danger">*</span></label
+              >
+              <div class="input-group">
+                <span class="input-group-text">â‚¹</span>
+                <input
+                  type="number"
+                  class="form-control variant-price"
+                  placeholder="999"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Compare At</label>
+              <div class="input-group">
+                <span class="input-group-text">â‚¹</span>
+                <input
+                  type="number"
+                  class="form-control variant-compare-price"
+                  placeholder="1299"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Inventory</label>
+              <input
+                type="number"
+                class="form-control variant-inventory"
+                placeholder="100"
+                min="0"
+                value="100"
+              />
+            </div>
+          </div>
+
+          <!-- Images (per color) -->
+          <div class="d-flex align-items-center mb-2">
+            <span class="fw-medium small me-2"
+              ><i class="bi bi-images me-1"></i>Color Images</span
+            >
+            <span
+              class="badge bg-secondary-subtle text-secondary ms-1 img-count-badge"
+              >0 images</span
+            >
+          </div>
+          <div class="image-drop-zone" data-color="">
+            <i class="bi bi-cloud-upload fs-3 text-muted mb-2"></i>
+            <p class="mb-1 text-muted small">
+              Drop images here or click to select
+            </p>
+            <p class="text-muted" style="font-size: 0.75rem">
+              JPG, PNG, WEBP â€¢ Max 5MB each
+            </p>
+            <input
+              type="file"
+              class="image-file-input"
+              accept="image/*"
+              multiple
+              style="display: none"
+            />
+          </div>
+          <div class="image-previews-grid mt-2"></div>
+
+          <!-- Video (per color) -->
+          <div class="d-flex align-items-center mb-2 mt-3">
+            <span class="fw-medium small me-2"
+              ><i class="bi bi-camera-video me-1"></i>Color Video
+              <span class="text-muted fw-normal"
+                >(optional â€“ 1 per color)</span
+              ></span
+            >
+            <span
+              class="badge bg-secondary-subtle text-secondary ms-1 video-count-badge"
+              >No video</span
+            >
+          </div>
+          <div class="video-drop-zone" data-color="">
+            <i class="bi bi-film fs-3 text-muted mb-2"></i>
+            <p class="mb-1 text-muted small">
+              Drop a video here or click to select
+            </p>
+            <p class="text-muted" style="font-size: 0.75rem">
+              MP4, MOV, WEBM â€¢ Max 100MB
+            </p>
+            <input
+              type="file"
+              class="video-file-input"
+              accept="video/mp4,video/mov,video/quicktime,video/webm"
+              style="display: none"
+            />
+          </div>
+          <div class="video-preview-wrap mt-2"></div>
+        </div>
+      </div>
     </template>
 
     <!-- â”€â”€â”€ Size Row Template â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <template id="sizeTemplate">
-        <div class="size-row d-flex gap-2 align-items-center mb-2">
-            <input type="text" class="form-control form-control-sm size-name"
-                placeholder="e.g., 12  (or type 12,11,10 to auto-split)" style="min-width:200px;max-width:220px" />
-            <input type="text" class="form-control form-control-sm size-sku" placeholder="SKU suffix (e.g., -12)"
-                style="min-width:170px;max-width:180px" />
-            <input type="number" class="form-control form-control-sm size-inventory" placeholder="Qty" value="100"
-                min="0" style="min-width:80px;max-width:90px" />
-            <input type="number" class="form-control form-control-sm size-price" placeholder="Override price" min="0"
-                step="0.01" style="min-width:120px;max-width:130px" />
-            <button class="btn btn-sm btn-ghost remove-size-btn text-danger flex-shrink-0"><i
-                    class="bi bi-x-lg"></i></button>
-        </div>
+      <div class="size-row d-flex gap-2 align-items-center mb-2">
+        <input
+          type="text"
+          class="form-control form-control-sm size-name"
+          placeholder="e.g., 12  (or type 12,11,10 to auto-split)"
+          style="min-width: 200px; max-width: 220px"
+        />
+        <input
+          type="text"
+          class="form-control form-control-sm size-sku"
+          placeholder="SKU suffix (e.g., -12)"
+          style="min-width: 170px; max-width: 180px"
+        />
+        <input
+          type="number"
+          class="form-control form-control-sm size-inventory"
+          placeholder="Qty"
+          value="100"
+          min="0"
+          style="min-width: 80px; max-width: 90px"
+        />
+        <input
+          type="number"
+          class="form-control form-control-sm size-price"
+          placeholder="Override price"
+          min="0"
+          step="0.01"
+          style="min-width: 120px; max-width: 130px"
+        />
+        <button
+          class="btn btn-sm btn-ghost remove-size-btn text-danger flex-shrink-0"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
     </template>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -807,127 +1266,303 @@
 
     <!-- â”€â”€â”€ Jewelry Category Datalist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <datalist id="shopifyCategoryList">
-        <!-- â”€â”€ Top Level â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry"></option>
+      <!-- â”€â”€ Top Level â”€â”€ -->
+      <option value="Apparel &amp; Accessories > Jewelry"></option>
 
-        <!-- â”€â”€ Rings â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Engagement Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Wedding Bands"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Solitaire Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Statement Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Stackable Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Cocktail Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Eternity Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Promise Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Birthstone Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Diamond Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Gold Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Silver Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Rose Gold Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Kundan Rings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Rings > Temple Rings"></option>
+      <!-- â”€â”€ Rings â”€â”€ -->
+      <option value="Apparel &amp; Accessories > Jewelry > Rings"></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Engagement Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Wedding Bands"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Solitaire Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Statement Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Stackable Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Cocktail Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Eternity Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Promise Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Birthstone Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Diamond Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Gold Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Silver Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Rose Gold Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Kundan Rings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Rings > Temple Rings"
+      ></option>
 
-        <!-- â”€â”€ Earrings â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Stud Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Hoop Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Drop &amp; Dangle Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Chandelier Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Huggie Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Climber Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Threader Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Ear Cuffs"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Clip-On Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Jhumkas"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Chandbali Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Diamond Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Gold Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Silver Earrings"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Earrings > Kundan Earrings"></option>
+      <!-- â”€â”€ Earrings â”€â”€ -->
+      <option value="Apparel &amp; Accessories > Jewelry > Earrings"></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Stud Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Hoop Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Drop &amp; Dangle Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Chandelier Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Huggie Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Climber Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Threader Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Ear Cuffs"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Clip-On Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Jhumkas"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Chandbali Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Diamond Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Gold Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Silver Earrings"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Earrings > Kundan Earrings"
+      ></option>
 
-        <!-- â”€â”€ Necklaces â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Pendant Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Chain Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Choker Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Layered Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Collar Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Bar Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Locket Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Birthstone Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Diamond Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Gold Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Silver Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Mangalsutra"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Kundan Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Temple Necklaces"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Necklaces > Haar"></option>
+      <!-- â”€â”€ Necklaces â”€â”€ -->
+      <option value="Apparel &amp; Accessories > Jewelry > Necklaces"></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Pendant Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Chain Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Choker Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Layered Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Collar Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Bar Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Locket Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Birthstone Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Diamond Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Gold Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Silver Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Mangalsutra"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Kundan Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Temple Necklaces"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Necklaces > Haar"
+      ></option>
 
-        <!-- â”€â”€ Bracelets â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Bangles"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Charm Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Cuff Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Tennis Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Chain Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Wrap Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Beaded Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Kada"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Diamond Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Gold Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Silver Bracelets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Bracelets > Kundan Bracelets"></option>
+      <!-- â”€â”€ Bracelets â”€â”€ -->
+      <option value="Apparel &amp; Accessories > Jewelry > Bracelets"></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Bangles"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Charm Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Cuff Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Tennis Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Chain Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Wrap Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Beaded Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Kada"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Diamond Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Gold Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Silver Bracelets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Bracelets > Kundan Bracelets"
+      ></option>
 
-        <!-- â”€â”€ Anklets â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Anklets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Anklets > Chain Anklets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Anklets > Charm Anklets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Anklets > Beaded Anklets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Anklets > Payal"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Anklets > Silver Anklets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Anklets > Gold Anklets"></option>
+      <!-- â”€â”€ Anklets â”€â”€ -->
+      <option value="Apparel &amp; Accessories > Jewelry > Anklets"></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Anklets > Chain Anklets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Anklets > Charm Anklets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Anklets > Beaded Anklets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Anklets > Payal"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Anklets > Silver Anklets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Anklets > Gold Anklets"
+      ></option>
 
-        <!-- â”€â”€ Chains â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Gold Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Silver Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Rose Gold Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Cuban Link Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Rope Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Box Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Figaro Chains"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Chains > Snake Chains"></option>
+      <!-- â”€â”€ Chains â”€â”€ -->
+      <option value="Apparel &amp; Accessories > Jewelry > Chains"></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Gold Chains"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Silver Chains"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Rose Gold Chains"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Cuban Link Chains"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Rope Chains"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Box Chains"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Figaro Chains"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Chains > Snake Chains"
+      ></option>
 
-        <!-- â”€â”€ Pendants & Charms â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Gold Pendants"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Diamond Pendants"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Religious Pendants"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Initial Pendants"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Birthstone Pendants"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Lockets"></option>
+      <!-- â”€â”€ Pendants & Charms â”€â”€ -->
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Gold Pendants"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Diamond Pendants"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Religious Pendants"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Initial Pendants"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Birthstone Pendants"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Charms &amp; Pendants > Lockets"
+      ></option>
 
-        <!-- â”€â”€ Brooches & Pins â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Brooches &amp; Pins"></option>
+      <!-- â”€â”€ Brooches & Pins â”€â”€ -->
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Brooches &amp; Pins"
+      ></option>
 
-        <!-- â”€â”€ Jewelry Sets â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Jewelry Sets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Bridal Sets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Matching Sets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Necklace &amp; Earring Sets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Kundan Sets"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Temple Sets"></option>
+      <!-- â”€â”€ Jewelry Sets â”€â”€ -->
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Jewelry Sets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Bridal Sets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Matching Sets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Necklace &amp; Earring Sets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Kundan Sets"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Jewelry Sets > Temple Sets"
+      ></option>
 
-        <!-- â”€â”€ Maang Tikka / Head Jewelry â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Jewelry > Maang Tikka"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Maatha Patti"></option>
-        <option value="Apparel &amp; Accessories > Jewelry > Nath (Nose Ring)"></option>
+      <!-- â”€â”€ Maang Tikka / Head Jewelry â”€â”€ -->
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Maang Tikka"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Maatha Patti"
+      ></option>
+      <option
+        value="Apparel &amp; Accessories > Jewelry > Nath (Nose Ring)"
+      ></option>
 
-        <!-- â”€â”€ Watches â”€â”€ -->
-        <option value="Apparel &amp; Accessories > Accessories > Watches"></option>
+      <!-- â”€â”€ Watches â”€â”€ -->
+      <option
+        value="Apparel &amp; Accessories > Accessories > Watches"
+      ></option>
     </datalist>
-
-</body>
-
+  </body>
 </html>
