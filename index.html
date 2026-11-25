@@ -36,7 +36,7 @@
             </a>
         </nav>
         <div class="sidebar-footer">
-            <small class="text-muted">v2.0.0 â€¢ Production Ready</small>
+            <small class="text-muted">Version 2.0.0</small>
         </div>
     </aside>
 
@@ -82,33 +82,31 @@
                 <!-- Welcome Banner -->
                 <div class="welcome-banner" id="welcomeBanner">
                     <div>
-                        <h5>🚀 Shopify Bulk Lister</h5>
-                        <p>Create beautiful product listings in seconds — upload images, set variants & export to
-                            Shopify.</p>
+                        <h5>Prepare product listings</h5>
+                        <p>Add product details, variants and media, then preview or export your catalog.</p>
                         <div class="stats-strip mt-3" id="statsStrip">
                             <div class="stat-pill">
-                                <span class="stat-dot" style="background:#6366f1"></span>
+                                <span class="stat-dot"></span>
                                 <span class="stat-val" id="statProducts">0</span>
                                 <span>Products</span>
                             </div>
                             <div class="stat-pill">
-                                <span class="stat-dot" style="background:#8b5cf6"></span>
+                                <span class="stat-dot"></span>
                                 <span class="stat-val" id="statColors">0</span>
                                 <span>Colors</span>
                             </div>
                             <div class="stat-pill">
-                                <span class="stat-dot" style="background:#06b6d4"></span>
+                                <span class="stat-dot"></span>
                                 <span class="stat-val" id="statImages">0</span>
                                 <span>Images</span>
                             </div>
                             <div class="stat-pill">
-                                <span class="stat-dot" style="background:#10b981"></span>
+                                <span class="stat-dot"></span>
                                 <span class="stat-val" id="statVideos">0</span>
                                 <span>Videos</span>
                             </div>
                         </div>
                     </div>
-                    <span class="banner-emoji">💎</span>
                 </div>
 
                 <!-- Products Container -->
@@ -269,15 +267,14 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-section-title mb-3"><i class="bi bi-info-circle me-2"></i>About</h5>
-                                <p class="text-muted small">Shopify Bulk Product Lister v2.0 â€” Production Ready</p>
+                                <p class="text-muted small">Shopify Bulk Product Lister, version 2.0</p>
                                 <ul class="list-unstyled small text-muted">
                                     <li><i class="bi bi-check2-circle text-success me-2"></i>Shopify CSV compatible</li>
                                     <li><i class="bi bi-check2-circle text-success me-2"></i>GitHub raw image hosting
                                     </li>
                                     <li><i class="bi bi-check2-circle text-success me-2"></i>Google Sheets integration
                                     </li>
-                                    <li><i class="bi bi-check2-circle text-success me-2"></i>Unlimited variants &amp;
-                                        images</li>
+                                    <li><i class="bi bi-check2-circle text-success me-2"></i>Multiple variant sizes and images</li>
                                     <li><i class="bi bi-check2-circle text-success me-2"></i>Duplicate SKU prevention
                                     </li>
                                     <li><i class="bi bi-check2-circle text-success me-2"></i>Color-grouped image upload
@@ -392,8 +389,7 @@
                                                     <li>In Shopify Admin, go to <strong>Products → Import</strong></li>
                                                     <li>Upload the CSV file and click <strong>Import products</strong>
                                                     </li>
-                                                    <li>Images must be publicly accessible (GitHub raw URLs are ✅)
-                                                    </li>
+                                                    <li>Images must be publicly accessible. Public GitHub repositories provide raw image URLs.</li>
                                                 </ol>
                                                 <div class="alert alert-warning mt-3 mb-0 small">
                                                     <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -509,7 +505,7 @@
                 <div class="modal-body p-4">
                     <h6 class="fw-semibold mb-3" id="progressTitle">Processingâ€¦</h6>
                     <div class="progress mb-2" style="height:10px">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="progressBar"
+                        <div class="progress-bar bg-primary" id="progressBar"
                             style="width:0%"></div>
                     </div>
                     <small class="text-muted" id="progressStatus">Initializingâ€¦</small>
@@ -538,22 +534,34 @@
             <!-- Step Indicator Bar -->
             <div class="step-indicator-bar">
                 <div class="step-item active" data-target-step="1">
-                    <div class="step-bubble"><i class="bi bi-tag-fill"></i></div>
+                <div class="step-bubble">
+                    <i class="bi bi-tag-fill"></i>
+                    <i class="bi bi-check2 step-complete-check"></i>
+                </div>
                     <div class="step-label-text">Basic Info</div>
                 </div>
                 <div class="step-connector"></div>
                 <div class="step-item" data-target-step="2">
-                    <div class="step-bubble"><i class="bi bi-file-text-fill"></i></div>
+                    <div class="step-bubble">
+                        <i class="bi bi-file-text-fill"></i>
+                        <i class="bi bi-check2 step-complete-check"></i>
+                    </div>
                     <div class="step-label-text">Description</div>
                 </div>
                 <div class="step-connector"></div>
                 <div class="step-item" data-target-step="3">
-                    <div class="step-bubble"><i class="bi bi-rulers"></i></div>
+                    <div class="step-bubble">
+                        <i class="bi bi-rulers"></i>
+                        <i class="bi bi-check2 step-complete-check"></i>
+                    </div>
                     <div class="step-label-text">Sizes</div>
                 </div>
                 <div class="step-connector"></div>
                 <div class="step-item" data-target-step="4">
-                    <div class="step-bubble"><i class="bi bi-palette-fill"></i></div>
+                    <div class="step-bubble">
+                        <i class="bi bi-palette-fill"></i>
+                        <i class="bi bi-check2 step-complete-check"></i>
+                    </div>
                     <div class="step-label-text">Colors</div>
                 </div>
             </div>
@@ -563,7 +571,7 @@
                 <!-- STEP 1: Basic Info -->
                 <div class="step-panel active" data-step-panel="1">
                     <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F3F7;&#xFE0F;</span>
+                        <span class="step-panel-icon"><i class="bi bi-tag"></i></span>
                         <div>
                             <div class="step-panel-title">Basic Information</div>
                             <div class="step-panel-sub">Name your product and set its type &amp; category</div>
@@ -598,7 +606,7 @@
                 <!-- STEP 2: Description & SEO -->
                 <div class="step-panel" data-step-panel="2">
                     <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F4DD;</span>
+                        <span class="step-panel-icon"><i class="bi bi-file-text"></i></span>
                         <div>
                             <div class="step-panel-title">Description &amp; SEO</div>
                             <div class="step-panel-sub">Write a description and optimise for search engines</div>
@@ -632,7 +640,7 @@
                 <!-- STEP 3: Sizes -->
                 <div class="step-panel" data-step-panel="3">
                     <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F4CF;</span>
+                        <span class="step-panel-icon"><i class="bi bi-rulers"></i></span>
                         <div>
                             <div class="step-panel-title">Sizes</div>
                             <div class="step-panel-sub">Add ring / product sizes with SKU suffix and quantity</div>
@@ -655,13 +663,10 @@
                             </div>
                         </div>
                         <div class="size-header-row d-flex gap-2 mb-1 sizes-header">
-                            <span class="text-muted" style="min-width:150px;font-size:11px;font-weight:600">SIZE
-                                NAME</span>
-                            <span class="text-muted" style="min-width:170px;font-size:11px;font-weight:600">SKU SUFFIX
-                                <span class="fw-normal">(optional)</span></span>
-                            <span class="text-muted" style="min-width:80px;font-size:11px;font-weight:600">QTY</span>
-                            <span class="text-muted" style="min-width:120px;font-size:11px;font-weight:600">PRICE
-                                OVERRIDE</span>
+                            <span class="text-muted">Size name</span>
+                            <span class="text-muted">SKU suffix <span class="fw-normal">(optional)</span></span>
+                            <span class="text-muted">Quantity</span>
+                            <span class="text-muted">Price override</span>
                         </div>
                         <div class="sizes-container mb-3"></div>
                     </div>
@@ -670,7 +675,7 @@
                 <!-- STEP 4: Colors & Images -->
                 <div class="step-panel" data-step-panel="4">
                     <div class="step-panel-header">
-                        <span class="step-panel-icon">&#x1F3A8;</span>
+                        <span class="step-panel-icon"><i class="bi bi-palette"></i></span>
                         <div>
                             <div class="step-panel-title">Colors &amp; Images</div>
                             <div class="step-panel-sub">Add color variants with prices, images and videos</div>
@@ -790,13 +795,12 @@
     <template id="sizeTemplate">
         <div class="size-row d-flex gap-2 align-items-center mb-2">
             <input type="text" class="form-control form-control-sm size-name"
-                placeholder="e.g., 12  (or type 12,11,10 to auto-split)" style="min-width:200px;max-width:220px" />
-            <input type="text" class="form-control form-control-sm size-sku" placeholder="SKU suffix (e.g., -12)"
-                style="min-width:170px;max-width:180px" />
-            <input type="number" class="form-control form-control-sm size-inventory" placeholder="Qty" value="100"
-                min="0" style="min-width:80px;max-width:90px" />
+                placeholder="e.g., 12 (or enter 12,11,10 to split)" />
+            <input type="text" class="form-control form-control-sm size-sku" placeholder="SKU suffix (e.g., -12)" />
+            <input type="number" class="form-control form-control-sm size-inventory" placeholder="Quantity" value="100"
+                min="0" />
             <input type="number" class="form-control form-control-sm size-price" placeholder="Override price" min="0"
-                step="0.01" style="min-width:120px;max-width:130px" />
+                step="0.01" />
             <button class="btn btn-sm btn-ghost remove-size-btn text-danger flex-shrink-0"><i
                     class="bi bi-x-lg"></i></button>
         </div>

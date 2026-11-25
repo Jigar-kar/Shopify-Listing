@@ -132,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (banner) banner.style.removeProperty('display');
   }
 });
-
 /* ─── Populate GAS code block ────────────────────────────────────────────── */
 function populateGASCode() {
   const el = document.getElementById('gasCodeBlock');
@@ -141,7 +140,7 @@ function populateGASCode() {
 
 /* ─── Copy GAS code (global fn for onclick) ──────────────────────────────── */
 window.copyGASCode = function () {
-  navigator.clipboard.writeText(GAS_CODE).then(() => toast('Apps Script code copied!', 'success'));
+  navigator.clipboard.writeText(GAS_CODE).then(() => toast('Apps Script code copied', 'success'));
 };
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -157,7 +156,7 @@ function saveConfig() {
     globalVendor: document.getElementById('globalVendor').value.trim(),
   };
   localStorage.setItem(LS_CONFIG, JSON.stringify(cfg));
-  toast('Configuration saved!', 'success');
+  toast('Configuration saved', 'success');
 }
 
 function loadConfig() {
@@ -201,7 +200,7 @@ function saveSettings() {
   settings.published = document.getElementById('defaultPublished').value;
   localStorage.setItem(LS_SETTINGS, JSON.stringify(settings));
 
-  toast('All settings saved!', 'success');
+  toast('All settings saved', 'success');
 }
 
 function loadSettings() {
@@ -455,7 +454,7 @@ function bindProductEvents(card, productId) {
     // Update Next button text on last step
     if (target === TOTAL_STEPS) {
       nextBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Done';
-      nextBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+      nextBtn.style.background = '';
     } else {
       nextBtn.innerHTML = 'Next <i class="bi bi-arrow-right ms-1"></i>';
       nextBtn.style.background = '';
@@ -520,8 +519,8 @@ function bindProductEvents(card, productId) {
         <div class="completion-icon-ring">
           <i class="bi bi-check2"></i>
         </div>
-        <div class="completion-title">Product Complete!</div>
-        <div class="completion-sub">All 4 steps are done.<br>What would you like to do next?</div>
+        <div class="completion-title">Product setup complete</div>
+        <div class="completion-sub">All four steps are complete.<br>What would you like to do next?</div>
         <div class="completion-actions">
           <button class="comp-btn comp-btn-add" id="compAdd_${productId}">
             <div class="comp-btn-icon"><i class="bi bi-plus-circle-fill"></i></div>
@@ -534,7 +533,7 @@ function bindProductEvents(card, productId) {
             <div class="comp-btn-icon"><i class="bi bi-cloud-upload-fill"></i></div>
             <div class="comp-btn-text">
               <strong>Upload &amp; Export CSV</strong>
-              <span>Send all products to Shopify</span>
+              <span>Save to Sheets and download a CSV</span>
             </div>
           </button>
         </div>
@@ -900,11 +899,11 @@ async function uploadImagesToGitHub(productHandle, colorSlug, previewItems, cfg)
       }
 
       const rawUrl = `https://raw.githubusercontent.com/${cfg.user}/${cfg.repo}/${cfg.branch}/${path}`;
-      statusEl.textContent = '✓ Done';
+      statusEl.textContent = 'Done';
       statusEl.className = 'upload-status done';
       urls.push(rawUrl);
     } catch (err) {
-      statusEl.textContent = '✗ Error';
+      statusEl.textContent = 'Error';
       statusEl.className = 'upload-status error';
       console.error('GitHub upload error:', err);
       urls.push(null);
@@ -1123,7 +1122,7 @@ function downloadCSV() {
   if (!window._csvData) { toast('No CSV data yet — run Upload & Export first.', 'warn'); return; }
   const { rows } = window._csvData;
   triggerCSVDownload(rows);
-  toast('CSV downloaded!', 'success');
+  toast('CSV downloaded', 'success');
 }
 
 function triggerCSVDownload(rows) {
@@ -1212,7 +1211,7 @@ async function handleSubmitAll() {
         doneImages += color.images.length;
         const pct = Math.round((doneImages / Math.max(totalImages, 1)) * 60);
         setProgress(pct, `Uploaded ${doneImages} / ${totalImages} images`);
-        logProgress(`✓ ${color.colorName}: ${urls.filter(Boolean).length}/${urls.length} images`, 'success');
+        logProgress(`${color.colorName}: ${urls.filter(Boolean).length}/${urls.length} images uploaded`, 'success');
       }
 
       // Upload video (1 per color) — use color.videoFile (plain File ref, not DOM node)
@@ -1231,11 +1230,11 @@ async function handleSubmitAll() {
         if (videoUrl) {
           // Append video URL after images in the map — buildCSVRows will add it as an extra-media row
           uploadedImageMap[prod.handle][color.colorSlug].push(videoUrl);
-          if (statusEl) { statusEl.textContent = '✓ Uploaded'; statusEl.className = 'upload-status done'; }
-          logProgress(`✓ Video uploaded: ${vf.name}`, 'success');
+          if (statusEl) { statusEl.textContent = 'Uploaded'; statusEl.className = 'upload-status done'; }
+          logProgress(`Video uploaded: ${vf.name}`, 'success');
         } else {
-          if (statusEl) { statusEl.textContent = '✗ Failed'; statusEl.className = 'upload-status error'; }
-          logProgress(`✗ Video upload failed: ${vf.name}`, 'error');
+          if (statusEl) { statusEl.textContent = 'Failed'; statusEl.className = 'upload-status error'; }
+          logProgress(`Video upload failed: ${vf.name}`, 'error');
         }
       }
     }
@@ -1254,9 +1253,9 @@ async function handleSubmitAll() {
       const formData = new URLSearchParams();
       formData.append('payload', JSON.stringify({ headers: CSV_HEADERS, rows }));
       await fetch(cfg.sheetsUrl, { method: 'POST', mode: 'no-cors', body: formData });
-      logProgress(`✓ Google Sheets: ${rows.length} rows sent`, 'success');
+      logProgress(`Google Sheets: ${rows.length} rows sent`, 'success');
     } catch (err) {
-      logProgress(`⚠ Google Sheets skipped: ${err.message}`, 'warn');
+      logProgress(`Google Sheets skipped: ${err.message}`, 'warn');
     }
   }
 
@@ -1265,9 +1264,9 @@ async function handleSubmitAll() {
   logProgress('Preparing CSV download…', 'info');
   triggerCSVDownload(rows);
 
-  setProgress(100, 'All done!');
-  logProgress(`✓ CSV downloaded — ${rows.length} rows. Import into Shopify!`, 'success');
-  toast(`✓ Done — ${rows.length} rows — CSV downloaded`, 'success');
+  setProgress(100, 'All done');
+  logProgress(`CSV downloaded — ${rows.length} rows. Import it into Shopify.`, 'success');
+  toast(`Export complete — ${rows.length} rows — CSV downloaded`, 'success');
   setTimeout(() => progressModal.hide(), 2800);
 }
 
@@ -1311,11 +1310,11 @@ async function uploadImagesToGitHub(productHandle, colorSlug, previewItems, cfg)
       }
 
       const rawUrl = `https://raw.githubusercontent.com/${cfg.user}/${cfg.repo}/${cfg.branch}/${path}`;
-      statusEl.textContent = '✓ Done';
+      statusEl.textContent = 'Done';
       statusEl.className = 'upload-status done';
       urls.push(rawUrl);
     } catch (err) {
-      statusEl.textContent = '✗ Error';
+      statusEl.textContent = 'Error';
       statusEl.className = 'upload-status error';
       console.error('GitHub upload error:', err);
       urls.push(null);
@@ -1350,8 +1349,7 @@ function logProgress(msg, type = 'info') {
   const log = document.getElementById('progressLog');
   const entry = document.createElement('div');
   entry.className = `log-entry ${type}`;
-  const icons = { success: '✓', error: '✗', warn: '⚠', info: '›' };
-  entry.textContent = `${icons[type] || '›'} ${msg}`;
+  entry.textContent = msg;
   log.appendChild(entry);
   log.scrollTop = log.scrollHeight;
 }
@@ -1361,23 +1359,23 @@ function logProgress(msg, type = 'info') {
    ══════════════════════════════════════════════════════════════════════════ */
 function toast(message, type = 'info') {
   const colorMap = {
-    success: { bg: '#2ecc71', icon: 'bi-check-circle-fill' },
-    error: { bg: '#e74c3c', icon: 'bi-x-circle-fill' },
-    warn: { bg: '#f39c12', icon: 'bi-exclamation-triangle-fill' },
-    info: { bg: '#5c6ac4', icon: 'bi-info-circle-fill' },
+    success: { icon: 'bi-check-circle-fill' },
+    error: { icon: 'bi-x-circle-fill' },
+    warn: { icon: 'bi-exclamation-triangle-fill' },
+    info: { icon: 'bi-info-circle-fill' },
   };
-  const { bg, icon } = colorMap[type] || colorMap.info;
+  const toastType = Object.prototype.hasOwnProperty.call(colorMap, type) ? type : 'info';
+  const { icon } = colorMap[toastType];
 
   const div = document.createElement('div');
-  div.className = 'toast align-items-center text-white border-0 show';
-  div.style.cssText = `background:${bg};`;
+  div.className = `toast align-items-center show toast-${toastType}`;
   div.setAttribute('role', 'alert');
   div.innerHTML = `
     <div class="d-flex">
       <div class="toast-body d-flex align-items-center gap-2">
-        <i class="bi ${icon}"></i>${escapeHtml(message)}
+        <i class="bi ${icon}" aria-hidden="true"></i>${escapeHtml(message)}
       </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto"
+      <button type="button" class="btn-close me-2 m-auto"
               data-bs-dismiss="toast"></button>
     </div>`;
 
@@ -1417,7 +1415,7 @@ function escapeHtml(str) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   ✨ UX ENHANCEMENTS — makes the app feel alive & fun
+   Listing workspace interactions
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* ─── Live Stats Counter ─────────────────────────────────────────────────── */
@@ -1459,35 +1457,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/* ─── Floating Emoji Cycle in Banner ─────────────────────────────────────── */
-const _bannerEmojis = ['💎', '✨', '💍', '🛍️', '🌟', '🪙', '👑', '🎀'];
-let _emojiIdx = 0;
-setInterval(() => {
-  const el = document.querySelector('.banner-emoji');
-  if (!el) return;
-  el.style.transform = 'scale(0.5) rotate(-10deg)';
-  el.style.opacity = '0';
-  el.style.transition = 'all .3s ease';
-  setTimeout(() => {
-    _emojiIdx = (_emojiIdx + 1) % _bannerEmojis.length;
-    el.textContent = _bannerEmojis[_emojiIdx];
-    el.style.transform = 'scale(1) rotate(0deg)';
-    el.style.opacity = '1';
-  }, 320);
-}, 3500);
-
 /* ─── Keyboard Shortcut: Ctrl + Enter = Add Product ─────────────────────── */
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
     e.preventDefault();
     document.getElementById('addProductBtn')?.click();
-    showShortcutToast('⌨️ Product added via Ctrl + Enter!');
+    showShortcutToast('Product added with Ctrl + Enter');
   }
   // Ctrl + Shift + S = Save Settings
   if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'S') {
     e.preventDefault();
     document.getElementById('saveSettingsBtn')?.click();
-    showShortcutToast('💾 Settings saved!');
+    showShortcutToast('Settings saved');
   }
 });
 
@@ -1495,71 +1476,17 @@ function showShortcutToast(msg) {
   toast(msg, 'info');
 }
 
-/* ─── Ripple Effect on All Buttons ──────────────────────────────────────── */
-document.addEventListener('click', e => {
-  const btn = e.target.closest('.btn:not(.btn-ghost):not(.btn-close)');
-  if (!btn) return;
-  const ripple = document.createElement('span');
-  ripple.className = 'ripple-effect';
-  const rect = btn.getBoundingClientRect();
-  ripple.style.left = (e.clientX - rect.left - 30) + 'px';
-  ripple.style.top = (e.clientY - rect.top - 30) + 'px';
-  btn.style.position = 'relative';
-  btn.style.overflow = 'hidden';
-  btn.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 650);
-}, true);
-
-/* ─── Confetti Burst on Successful Upload ───────────────────────────────── */
-function launchConfetti() {
-  const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
-  for (let i = 0; i < 60; i++) {
-    const el = document.createElement('div');
-    el.style.cssText = `
-      position:fixed; z-index:9999; pointer-events:none;
-      width:${6 + Math.random() * 8}px; height:${6 + Math.random() * 8}px;
-      background:${colors[Math.floor(Math.random() * colors.length)]};
-      border-radius:${Math.random() > .5 ? '50%' : '2px'};
-      left:${Math.random() * 100}vw; top:-10px;
-      opacity:1; transform:rotate(${Math.random() * 360}deg);
-    `;
-    document.body.appendChild(el);
-
-    const duration = 1200 + Math.random() * 1800;
-    const endTop = 50 + Math.random() * 60;
-    const swayX = (Math.random() - .5) * 200;
-    const startTime = performance.now();
-
-    function tick(now) {
-      const p = (now - startTime) / duration;
-      if (p >= 1) { el.remove(); return; }
-      el.style.top = (p * endTop) + 'vh';
-      el.style.left = `calc(${parseFloat(el.style.left)} + ${swayX * p}px)`;
-      el.style.opacity = 1 - p;
-      el.style.transform = `rotate(${p * 720}deg)`;
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-}
-
-// Hook confetti into the existing toast function — fire when success upload
-const _origToast = window.toast;
-// We'll patch the upload complete toast in handleSubmitAll
-// by intercepting the 'All products exported' message
-const _origHandleSubmitAll = window.handleSubmitAll;
-
 /* ─── Tooltip Hints on form labels ──────────────────────────────────────── */
 const FIELD_HINTS = {
-  'product-title': '💡 A clear, keyword-rich title boosts SEO',
-  'product-type': '🏷️ Jewelry type for Shopify collections',
-  'product-category': '📂 Shopify Google category taxonomy',
-  'product-tags': '🔖 Comma-separated tags help filter products',
-  'product-seo-title': '🔍 Ideal length: 50–60 characters',
-  'product-seo-desc': '🔍 Ideal length: 120–160 characters',
-  'variant-sku': '🔑 Unique identifier — no spaces allowed',
-  'variant-price': '💰 Base price in ₹ for this color',
-  'color-name': '🎨 Exact color name used in variant options',
+  'product-title': 'Use a clear title with relevant search terms.',
+  'product-type': 'Choose the product type used for Shopify collections.',
+  'product-category': 'Use the Shopify product category taxonomy.',
+  'product-tags': 'Separate tags with commas for Shopify collections and filters.',
+  'product-seo-title': 'Recommended title length: 50–60 characters.',
+  'product-seo-desc': 'Recommended description length: 120–160 characters.',
+  'variant-sku': 'Use a SKU that is unique across products.',
+  'variant-price': 'Enter the base price in ₹ for this color.',
+  'color-name': 'Use the variant color name shown in your catalog.',
 };
 
 function attachFieldHints(card) {
@@ -1572,10 +1499,6 @@ function attachFieldHints(card) {
       if (!tip) {
         tip = document.createElement('div');
         tip.className = 'field-tip';
-        tip.style.cssText = `
-          font-size:11px; color:#6366f1; margin-top:3px;
-          animation:fadeInPage .2s ease; font-weight:500;
-        `;
         el.parentElement.appendChild(tip);
       }
       tip.textContent = hint;
@@ -1626,84 +1549,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/* ─── Confetti on successful export ──────────────────────────────────────── */
-// Intercept the progress log success message
-const _origLog = window.logEntry;
-document.addEventListener('DOMContentLoaded', () => {
-  // Watch submit button for completion indication via statusBadge text change
-  const badge = document.getElementById('statusBadge');
-  if (!badge) return;
-  let _prevText = badge.textContent;
-  new MutationObserver(() => {
-    const txt = badge.textContent;
-    if (txt !== _prevText && txt.includes('Ready') && _prevText.includes('…')) {
-      launchConfetti();
-    }
-    _prevText = txt;
-  }).observe(badge, { childList: true, subtree: true, characterData: true });
-});
-
 /* ─── Smooth scroll-to-top shortcut ─────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   const fabWrapper = document.createElement('button');
   fabWrapper.id = 'scrollTopFab';
+  fabWrapper.className = 'scroll-top-fab';
   fabWrapper.innerHTML = '<i class="bi bi-arrow-up-short"></i>';
   fabWrapper.title = 'Scroll to top';
-  fabWrapper.style.cssText = `
-    position:fixed; bottom:90px; right:24px; width:44px; height:44px;
-    border-radius:50%; border:none; cursor:pointer;
-    background:linear-gradient(135deg,#6366f1,#8b5cf6);
-    color:#fff; font-size:22px; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 4px 20px rgba(99,102,241,.45); z-index:998;
-    transition:all .25s cubic-bezier(.4,0,.2,1);
-    opacity:0; transform:translateY(20px) scale(.8); pointer-events:none;
-  `;
+  fabWrapper.setAttribute('aria-label', 'Scroll to top');
+  fabWrapper.setAttribute('aria-hidden', 'true');
+  fabWrapper.tabIndex = -1;
   fabWrapper.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-  fabWrapper.addEventListener('mouseenter', () => {
-    fabWrapper.style.transform = 'translateY(-4px) scale(1.1)';
-    fabWrapper.style.boxShadow = '0 8px 30px rgba(99,102,241,.65)';
-  });
-  fabWrapper.addEventListener('mouseleave', () => {
-    fabWrapper.style.transform = 'translateY(0) scale(1)';
-    fabWrapper.style.boxShadow = '0 4px 20px rgba(99,102,241,.45)';
   });
   document.body.appendChild(fabWrapper);
 
   window.addEventListener('scroll', () => {
     const show = window.scrollY > 300;
-    fabWrapper.style.opacity = show ? '1' : '0';
-    fabWrapper.style.transform = show ? 'translateY(0) scale(1)' : 'translateY(20px) scale(.8)';
-    fabWrapper.style.pointerEvents = show ? 'auto' : 'none';
+    fabWrapper.classList.toggle('is-visible', show);
+    fabWrapper.tabIndex = show ? 0 : -1;
+    fabWrapper.setAttribute('aria-hidden', String(!show));
   }, { passive: true });
 });
-
-/* ─── Welcome banner tip rotation ───────────────────────────────────────── */
-const _tips = [
-  'Tip: Press <b>Ctrl+Enter</b> to instantly add a new product! 🚀',
-  'Tip: Drag &amp; drop multiple images at once into the drop zone! 🖼️',
-  'Tip: Use comma-separated sizes like <b>6,7,8,9</b> in the quick-add box! ⚡',
-  'Tip: Collapse any product card to keep the view tidy! 📌',
-  'Tip: Every image is auto-converted to JPEG for Shopify compatibility! 🔄',
-];
-let _tipIdx = 0;
-document.addEventListener('DOMContentLoaded', () => {
-  const banner = document.querySelector('.welcome-banner p');
-  if (!banner) return;
-  const originalText = banner.innerHTML;
-  let _inTip = false;
-
-  setInterval(() => {
-    if (!document.getElementById('page-lister')?.classList.contains('active')) return;
-    _inTip = !_inTip;
-    banner.style.transition = 'opacity .3s ease';
-    banner.style.opacity = '0';
-    setTimeout(() => {
-      banner.innerHTML = _inTip ? _tips[_tipIdx % _tips.length] : originalText;
-      if (_inTip) _tipIdx++;
-      banner.style.opacity = '1';
-    }, 300);
-  }, 6000);
-});
-
